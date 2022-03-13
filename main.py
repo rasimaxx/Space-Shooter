@@ -111,9 +111,18 @@ def main():
 
     while run:
         clock.tick(FPS)
+        
+        redraw_window()
 
         if lives <= 0 or player.health <= 0:
             lost = True
+            lost_count += 1
+
+        if lost:
+            if lost_count > FPS * 3:
+                run = False
+            else:
+                continue
 
         if len(enemies) == 0:
             level += 1
@@ -143,6 +152,6 @@ def main():
                 lives -=1
                 enemies.remove(enemy)
 
-        redraw_window()
+        
 
 main()
