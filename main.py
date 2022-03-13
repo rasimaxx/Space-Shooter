@@ -3,6 +3,7 @@ import pygame
 import os
 import time
 import random
+pygame.font.init() 
 
 # Setup Display
 WIDTH, HEIGHT = 750, 800
@@ -29,10 +30,22 @@ BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("assets","bac
 def main():
     run = True
     FPS = 60
+    level = 1
+    lives = 5
+    main_font = pygame.font.SysFont("arial",50)
+
     clock = pygame.time.Clock()
 
     def redraw_window():
         WINDOW.blit(BACKGROUND,(0,0)) # Top Left corner from the screen (0,0)
+        # draw text
+        level_label = main_font.render(f"Level: {level}",1,(255,255,0))
+        lives_label = main_font.render(f"Lives: {lives}",1,(255,255,255))
+
+        WINDOW.blit(level_label,(10,10)) # Top Left corner
+        WINDOW.blit(lives_label, (WIDTH-lives_label.get_width()-10,10)) # Top Right corner
+
+
         pygame.display.update()
 
     while run:
