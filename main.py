@@ -1,3 +1,4 @@
+from select import select
 from turtle import width
 import pygame
 import os
@@ -6,7 +7,7 @@ import random
 pygame.font.init() 
 
 # Setup Display
-WIDTH, HEIGHT = 750, 800
+WIDTH, HEIGHT = 700, 800
 WINDOW = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Space Shooter Game")
 
@@ -54,17 +55,37 @@ class Player(Ship):
         self.ship_img = YELLOW_SPACE_SHIP
         self.laser_img = YELLOW_LASER
         self.mask = pygame.mask.from_surface(self.ship_img) # Create a mask
+
+class Enemy(Ship):
+    COLOR_MAP = {
+        "blue": (BLUE_SPACE_SHIP, BLUE_LASER),
+        "green": (GREEN_SPACE_SHIP, GREEN_LASER),
+        "red": (RED_SPACE_SHIP, RED_LASER)
+    }
+
+    def __init__(self, x, y, color, health=100):
+        super().__init__(x, y, health)
+        self.ship_img, self.laser_img = self.COLOR_MAP[color]
+        self.mask = pygame.mask.from_surface(self.ship_img) # Create a mask
+    
+    def move(self, vel):
+        self.y += vel
         
 def main():
     run = True
     FPS = 60
-    level = 1
+    level = 0
     lives = 5
     main_font = pygame.font.SysFont("arial",50)
+    lost_font = pygame.font.SysFont("arial",60)
 
     player_vel = 5  # Player velocity
-
     player = Player(300,650)
+    lost = False
+
+    enemy_vel = 1
+    enemies = []
+    wave_length = 5
 
     clock = pygame.time.Clock()
 
@@ -79,12 +100,28 @@ def main():
 
         player.draw(WINDOW)
 
+        for enemy in enemies:
+            enemy.draw(WINDOW)
+
+        if lost:
+            lost_label = lost_font.render("You Lost!!",1,(255,255,255))
+            WINDOW.blit(lost_label, (WIDTH/2 - lost_label.get_width()/2, 350))
+
         pygame.display.update()
 
     while run:
         clock.tick(FPS)
-        redraw_window()
 
+        if lives <= 0 or player.health <= 0:
+            lost = True
+
+        if len(enemies) == 0:
+            level += 1
+            wave_length += 5
+            for i in range(wave_length):
+                enemy = Enemy(random.randrange(50, WIDTH-100), random.randrange(-1500, -100), random.choice(["blue","green","red"]))
+                enemies.append(enemy)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -98,5 +135,14 @@ def main():
             player.y -= player_vel
         if keys[pygame.K_DOWN] and player.y + player_vel + player.get_height()  < HEIGHT:
             player.y += player_vel
+
+        # Create enemies move and increment the lives
+        for enemy in enemies[:]:
+            enemy.move(enemy_vel)
+            if enemy.y + enemy.get_height() > HEIGHT:
+                lives -=1
+                enemies.remove(enemy)
+
+        redraw_window()
 
 main()
