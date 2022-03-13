@@ -40,7 +40,14 @@ class Ship:
     def draw(self, window):
         window.blit(self.ship_img,(self.x,self.y))
 
-
+class Player(Ship):
+    def __init__(self, x, y, health=100):
+        super().__init__(x, y, health)
+        self.max_health = health
+        self.ship_img = YELLOW_SPACE_SHIP
+        self.laser_img = YELLOW_LASER
+        self.mask = pygame.mask.from_surface(self.ship_img) # Create a mask
+        
 def main():
     run = True
     FPS = 60
@@ -50,7 +57,7 @@ def main():
 
     player_vel = 5  # Player velocity
 
-    ship = Ship(300,650)
+    player = Player(300,650)
 
     clock = pygame.time.Clock()
 
@@ -63,7 +70,7 @@ def main():
         WINDOW.blit(level_label,(10,10)) # Top Left corner
         WINDOW.blit(lives_label, (WIDTH-lives_label.get_width()-10,10)) # Top Right corner
 
-        ship.draw(WINDOW)
+        player.draw(WINDOW)
 
         pygame.display.update()
 
@@ -76,13 +83,13 @@ def main():
                 run = False
         # Create buttons to move the ship
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and ship.x - player_vel > 0:
-            ship.x -= player_vel
-        if keys[pygame.K_RIGHT] and ship.x + player_vel+50 < WIDTH:
-            ship.x += player_vel
-        if keys[pygame.K_UP] and ship.y - player_vel > 0:
-            ship.y -= player_vel
-        if keys[pygame.K_DOWN] and ship.y + player_vel+50  < HEIGHT:
-            ship.y += player_vel
+        if keys[pygame.K_LEFT] and player.x - player_vel > 0:
+            player.x -= player_vel
+        if keys[pygame.K_RIGHT] and player.x + player_vel+50 < WIDTH:
+            player.x += player_vel
+        if keys[pygame.K_UP] and player.y - player_vel > 0:
+            player.y -= player_vel
+        if keys[pygame.K_DOWN] and player.y + player_vel+50  < HEIGHT:
+            player.y += player_vel
 
 main()
