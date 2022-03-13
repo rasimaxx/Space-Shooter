@@ -38,7 +38,8 @@ class Ship:
         self.cool_down_counter = 0
 
     def draw(self, window):
-        pygame.draw.rect(window,(255,0,0),(self.x,self.y,50,50))
+        window.blit(self.ship_img,(self.x,self.y))
+
 
 def main():
     run = True
@@ -46,6 +47,8 @@ def main():
     level = 1
     lives = 5
     main_font = pygame.font.SysFont("arial",50)
+
+    player_vel = 5  # Player velocity
 
     ship = Ship(300,650)
 
@@ -71,5 +74,15 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+        # Create buttons to move the ship
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and ship.x - player_vel > 0:
+            ship.x -= player_vel
+        if keys[pygame.K_RIGHT] and ship.x + player_vel+50 < WIDTH:
+            ship.x += player_vel
+        if keys[pygame.K_UP] and ship.y - player_vel > 0:
+            ship.y -= player_vel
+        if keys[pygame.K_DOWN] and ship.y + player_vel+50  < HEIGHT:
+            ship.y += player_vel
 
 main()
